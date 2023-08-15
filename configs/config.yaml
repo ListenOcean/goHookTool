@@ -1,0 +1,36 @@
+hookpoints:
+  encoding/json:
+    - encoding/json.Unmarshal
+    - encoding/json.NewDecoder
+    - encoding/json.(*Decoder).Decode
+  runtime:
+    - runtime.concatstrings
+  fmt:
+    - fmt.Sprintf
+  bytes:
+    - bytes.NewBuffer
+    - bytes.NewReader
+  strings:
+    - strings.Join
+    - strings.Repeat
+    - strings.Replace
+  os:
+    - os.OpenFile
+    - os.Remove
+    - os.Rename
+  os/exec:
+    - os/exec.Command
+    - os/exec.(*Cmd).Start
+  net/http:
+    - net/http.(*Client).Do
+    - net/http.(*Request).FormValue
+
+codes:
+  runtime.concatstrings:
+    # epilog 解决 返回值逃逸的问题
+    epilog: |
+      buf = nil
+      defer func() { _epilog(_result0) }()
+    prolog: |
+      _epilog, _prolog_abort_err := (*_prolog)(buf, a)
+    

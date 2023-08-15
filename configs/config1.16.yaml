@@ -1,0 +1,41 @@
+hookpoints:
+  encoding/json:
+    - encoding/json.Unmarshal
+    - encoding/json.NewDecoder
+    - encoding/json.(*Decoder).Decode
+  runtime:
+    - runtime.concatstrings
+  fmt:
+    - fmt.Sprintf
+  bytes:
+    - bytes.NewBuffer
+    - bytes.NewReader
+  strings:
+    - strings.Join
+    - strings.Repeat
+    - strings.Replace
+  os:
+    - os.OpenFile
+    - os.Remove
+    - os.Rename
+  os/exec:
+    - os/exec.Command
+    - os/exec.(*Cmd).Start
+  net/http:
+    - net/http.(*Client).Do
+    - net/http.(*Request).FormValue
+
+codes:
+  runtime.concatstrings:
+    epilog: |
+      buf = nil
+      defer func() { _epilog(_result0) }()
+    # prolog 解决 "a escapes to heap, not allowed in runtime"
+    prolog: |
+      newa := []string{}
+      for _, each := range a {
+        new_each := make([]byte, len(each))
+        copy(new_each, each)
+        newa = append(newa, string(new_each))
+      }
+      _epilog, _prolog_abort_err := (*_prolog)(buf, newa)
