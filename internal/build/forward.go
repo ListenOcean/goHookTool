@@ -31,11 +31,24 @@ func DoBuildWithToolexec(args []string) (err error) {
 	return nil
 }
 
+func IsToolexecExist(args []string) bool {
+	for _, arg := range args {
+		if strings.HasPrefix(arg, "-toolexec") {
+			return true
+		}
+	}
+	return false
+}
+
 func AddToolexec() (args []string, err error) {
-	// TODO: 判断是否存在toolexec
-	toolexecStr := `-toolexec=` + AutobuildPath + ` toolexec`
-	// insert before build
-	args = append(os.Args[:2], append([]string{toolexecStr, "-a"}, os.Args[2:]...)...)
+	var toolexecStr string
+	if !IsToolexecExist(os.Args) {
+		toolexecStr = `-toolexec=` + AutobuildPath + ` toolexec`
+		args = append(os.Args[:2], append([]string{toolexecStr, "-a"}, os.Args[2:]...)...)
+	} else {
+		log.Info("already has toolexec, skip hook")
+		args = os.Args
+	}
 	return
 }
 

@@ -161,7 +161,7 @@ func forwardCommand(args []string) error {
 }
 
 func printUsage() {
-	const usageFormat = `Nothing ToDo`
+	const usageFormat = `Nothing yd`
 	_, _ = fmt.Fprintf(os.Stderr, usageFormat)
 	os.Exit(2)
 }
